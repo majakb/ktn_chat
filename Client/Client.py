@@ -40,7 +40,7 @@ class Client:
 
 
     def retrieve_names(self):
-    
+
 
     def help():
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
 
 # Håndtere error og log-in
-- handleInfo ()
-- handleError ()
-- handleHistory ()
-- handleMessage ()
+# - handleInfo ()
+# - handleError ()
+# - handleHistory ()
+# - handleMessage ()
