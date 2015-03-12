@@ -33,6 +33,22 @@ class Client:
         # TODO: Handle sending of a payload
         pass
 
+    def login(self, username):
+
+
+    def logout(self):
+
+
+    def retrieve_names(self):
+    
+
+    def help():
+
+
+    def send_message(self, message):
+
+
+
 
 if __name__ == '__main__':
     """
@@ -42,3 +58,11 @@ if __name__ == '__main__':
     No alterations is necessary
     """
     client = Client('localhost', 9998)
+
+
+
+# Håndtere error og log-in
+- handleInfo ()
+- handleError ()
+- handleHistory ()
+- handleMessage ()
