@@ -36,7 +36,7 @@ class Client:
 
     def receive_message(self, message):
         # TODO: Handle incoming message
-        pass
+        print message
 
     def send_payload(self, data):
         # TODO: Handle sending of a payload

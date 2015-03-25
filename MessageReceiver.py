@@ -34,4 +34,4 @@ class MessageReceiver(Thread):
             print payload
             #END
             message = json.loads(payload)
-            self.client.receive_message()
+            self.client.receive_message(message)
