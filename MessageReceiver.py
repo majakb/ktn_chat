@@ -30,4 +30,8 @@ class MessageReceiver(Thread):
         # TODO: Make MessageReceiver receive and handle payloads
         while True:
             payload = self.connection.recv(4096)
+            #DEBUG
+            print payload
+            #END
             message = json.loads(payload)
+            self.client.receive_message()
