@@ -22,6 +22,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.port = self.client_address[1]
         self.connection = self.request
 
+        print "New client logged in."
+
         # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096)
@@ -40,6 +42,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 pass
 
             elif request == "msg":
+                print data["content"]
                 self.broadcast(data["content"])
 
             else:
@@ -73,7 +76,7 @@ if __name__ == "__main__":
 
     No alterations is necessary
     """
-    HOST, PORT = 'localhost', 9998
+    HOST, PORT = "", 9998
     print 'Server running...'
 
     # Set up and initiate the TCP server
