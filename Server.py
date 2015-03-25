@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import SocketServer
+import json
+import time
 
 
 class ClientHandler(SocketServer.BaseRequestHandler):
@@ -9,6 +11,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     only connected clients, and not the server itself. If you want to write
     logic for the server, you must write it outside this class
     """
+
+    clients = []
 
     def handle(self):
         """
@@ -21,9 +25,37 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096)
+            data = json.loads(received_string)
+            request = data["request"]
+
+            if request == "login":
+                ClientHandler.clients.append(self)
+                self.username = data["content"]
+                self.send_response("info", "Du er nå logget inn. Velkommen!")
+
+            elif request == "logout":
+                pass
+
+            elif request == "names":
+                pass
+
+            elif request == "msg":
+                self.broadcast(data["content"])
+
+            else:
+                raise ValueError("Ugyldig argument til serveren.")
             
             # TODO: Add handling of received payload from client
 
+    def broadcast(self, data):
+        for client in ClientHandler.clients:
+            payload = json.dumps({"timestamp": 3, "sender": self.username, "response": "message", "content": data})
+            client.connection.sendall(payload)
+
+    def send_response(self, response, content):
+        data = {"timestamp": time.time(), "sender": "Server", "response": response, "content": content}
+        payload = json.dumps(data)
+        self.connection.sendall(payload)
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """
