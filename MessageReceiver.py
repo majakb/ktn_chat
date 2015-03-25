@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from threading import Thread
-import json
+import simplejson
 
 class MessageReceiver(Thread):
     """
@@ -30,8 +30,5 @@ class MessageReceiver(Thread):
         # TODO: Make MessageReceiver receive and handle payloads
         while True:
             payload = self.connection.recv(4096)
-            #DEBUG
-            print payload
-            #END
-            message = json.loads(payload)
+            message = simplejson.loads(payload)
             self.client.receive_message(message)
