@@ -35,25 +35,26 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
             if request == "login":
                 if self.loggedIn():
-                    self.send_payload(["error", "Du er allerede logget inn."])
+                    self.send_payload(["error", "Already logged in."])
                 else:
                     ClientHandler.clients.append(self)
                     self.username = content
-                    self.send_payload(["info", "Du er nå logget inn. Velkommen!"])
+                    self.send_payload(["info", "You're now logged in. Welcome!"])
                     self.send_payload(["history", self.messages])
                     print "User logged in: " + self.username
 
             elif request == "logout":
                 if not self.loggedIn():
-                    error = ["error", "Du er ikke logget inn enda."]
+                    error = ["error", "Not yet logged in."]
                     self.send_payload(error)
                 else:
                     ClientHandler.clients.remove(self)
-                    self.send_payload(["info", "Du er nå logget av. Velkommen tilbake!"])
+                    self.send_payload(["info", "You're now logged out. Welcome back!"])
+                    print "User logged out: " + self.username
 
             elif request == "names":
                 if not self.loggedIn():
-                    error = ["error", "Du er ikke logget inn enda."]
+                    error = ["error", "Not yet logged in."]
                     self.send_payload(error)
                 else:
                     c = []
@@ -75,7 +76,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
             elif request == "msg":
                 if not self.loggedIn():
-                    error = ["error", "Du er ikke logget inn enda."]
+                    error = ["error", "Not yet logged in."]
                     self.send_payload(error)
                 else:
                     self.broadcast(["message", content])
