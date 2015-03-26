@@ -36,15 +36,17 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 ClientHandler.clients.append(self)
                 self.username = content
                 self.send_payload(["info", "Du er nå logget inn. Velkommen!"])
-                if self.messages:
-                    self.send_payload(["history", self.messages])
+                self.send_payload(["history", self.messages])
 
             elif request == "logout":
+                #DEBUG
+                print ""
+                #END
                 if not self.loggedIn():
                     self.send_payload("Error", "Du er ikke logget inn enda.")
-
-                ClientHandler.clients.remove(self)
-                self.send_payload(["info", "Du er nå logget av. Velkommen tilbake!"])
+                else:
+                    ClientHandler.clients.remove(self)
+                    self.send_payload(["info", "Du er nå logget av. Velkommen tilbake!"])
 
             elif request == "names":
                 c = []
@@ -63,10 +65,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 self.send_payload(["info", string])
 
             elif request == "msg":
-                #Debug
-                print content
-                #Debug
-                self.messages.append(data)
                 self.broadcast(["message", content])
 
             else:
@@ -76,16 +74,22 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def send_payload(self, data):
         payload = json.dumps({"timestamp": time.time(), "sender": self.username, "response": data[0], "content": data[1]})
+        #DEBUG
+        print "payload: " + payload
+        #DEBUG
         self.connection.sendall(payload)
 
     def broadcast(self, data):
+        data = {"timestamp": time.time(), "sender": self.username, "response": data[0], "content": data[1]}
+        ClientHandler.messages.append(data)
+        payload = json.dumps(data)
         for client in ClientHandler.clients:
             if client != self:
-                payload = json.dumps({"timestamp": time.time(), "sender": self.username, "response": data[0], "content": data[1]})
                 client.connection.sendall(payload)
 
+
     def loggedIn(self):
-        return self.clients.contains(self)
+        return self in self.clients
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
