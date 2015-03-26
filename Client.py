@@ -94,12 +94,19 @@ class Client:
         self.send_payload(data)
 
     def help(self):
-        data = ["help", None]
-        self.send_payload(data)
-
-        print "\n***********************"
-        print "Dette er litt hjelp"
-        print "***********************\n"
+        if self.loggedIn:
+            data = ["help", None]
+            self.send_payload(data)
+        else:
+            print "**********************************"
+            print "-----  Supported requests  -----"
+            print "/login <username>"
+            print "<message>"
+            print "/names"
+            print "/help"
+            print "/logout"
+            print "/disconnect"
+            print "**********************************\n"
 
     def send_message(self, message):
         data = ["msg", message]
