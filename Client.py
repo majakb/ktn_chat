@@ -33,7 +33,9 @@ class Client:
 
 
     def receive_message(self, message):
-        timestamp = datetime.datetime.fromtimestamp(int(message["timestamp"])).strftime('%Y-%m-%d %H:%M:%S')
+        timestamp = message["timestamp"]
+        if type(timestamp) == float:
+            timestamp = datetime.datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
         sender = message["sender"]
         response = message["response"]
         content = message["content"]
@@ -125,7 +127,7 @@ class Client:
 
             elif input.startswith("/disconnect"):
                 if self.loggedIn:
-                    print "Error: Yout must log out before exiting the program."
+                    print "Error: You must log out before exiting the program."
                 else:
                     self.disconnect()
                     break
