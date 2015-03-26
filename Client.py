@@ -142,6 +142,7 @@ class Client:
                     print "Error: Du må logge ut før du kan avslutte programmet"
                 else:
                     self.disconnect()
+                    break
 
             else:
                 if self.loggedIn:
