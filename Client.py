@@ -22,10 +22,6 @@ class Client:
         # Connect to the server
         self.connection.connect((self.host, self.server_port))
 
-        #Create a MessageReceiver thread
-        self.messagereceiver = MessageReceiver.MessageReceiver(self, self.connection)
-        self.messagereceiver.start()
-
 
     def disconnect(self):
         self.connection.close()
@@ -75,9 +71,21 @@ class Client:
         data = ["login", username]
         self.send_payload(data)
 
+        payload = self.connection.recv(4096)
+        message = json.loads(payload)
+        self.receive_message(message)
+
+        #Create a MessageReceiver thread
+        self.messagereceiver = MessageReceiver.MessageReceiver(self, self.connection)
+        self.messagereceiver.start()
+
     def logout(self):
         data = ["logout", None]
         self.send_payload(data)
+
+        #Close the MessageReceiver thread
+        self.messagereceiver.exit()
+
 
     def retrieve_names(self):
         data = ["names", None]
