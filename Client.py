@@ -23,9 +23,14 @@ class Client:
         # Connect to the server
         self.connection.connect((self.host, self.server_port))
 
+        # Create a MessageReceiver thread
+        self.messagereceiver = MessageReceiver.MessageReceiver(self, self.connection)
+        self.messagereceiver.start()
+
 
     def disconnect(self):
         self.connection.close()
+
 
     def receive_message(self, message):
         timestamp = datetime.datetime.fromtimestamp(int(message["timestamp"])).strftime('%Y-%m-%d %H:%M:%S')
@@ -35,17 +40,17 @@ class Client:
 
 
         if response == "message":
-            print "@ Melding fra " + sender + " ("+timestamp+"):"
+            print "@ Message from " + sender + " ("+timestamp+"):"
             print ">> " + content
 
         elif response == "info":
-            print "@ Info fra server ("+timestamp+"):"
+            print "@ Info from server ("+timestamp+"):"
             print content
 
         elif response == "history":
-            print "\n-------------- HISTORIE -----------------"
+            print "\n-------------- HISTORY -----------------"
             if not content:
-                print "Ingen historie å vise."
+                print "There is no history."
             else:
                 for msg in content:
                     self.receive_message(msg)
@@ -56,7 +61,7 @@ class Client:
             print content
 
         else:
-            print "@ Udefinert response fra " + sender + " ("+timestamp+"):"
+            print "@ Undefined response from " + sender + " ("+timestamp+"):"
             print content
 
 
@@ -71,43 +76,20 @@ class Client:
     def login(self, username):
         data = ["login", username]
         self.send_payload(data)
-
-        payload = self.connection.recv(4096)
-        message = json.loads(payload)
-        self.receive_message(message)
-
-        #Create a MessageReceiver thread
-        self.messagereceiver = MessageReceiver.MessageReceiver(self, self.connection)
-        self.messagereceiver.start()
+        self.loggedIn = True
 
     def logout(self):
         data = ["logout", None]
         self.send_payload(data)
-
-        #Close the MessageReceiver thread
-        self.messagereceiver.join()
         self.loggedIn = False
-
 
     def retrieve_names(self):
         data = ["names", None]
         self.send_payload(data)
 
     def help(self):
-        if self.loggedIn:
-            data = ["help", None]
-            self.send_payload(data)
-        else:
-            pass
-            #print "**********************************"
-            #print "-----  Supported requests  -----"
-            #print "/login <username>"
-            #print "<message>"
-            #print "/names"
-            #print "/help"
-            #print "/logout"
-            #print "/disconnect"
-            #print "**********************************\n"
+        data = ["help", None]
+        self.send_payload(data)
 
     def send_message(self, message):
         data = ["msg", message]
@@ -115,10 +97,10 @@ class Client:
 
     def main(self):
 
-        print "**************************************"
-        print "* * * * * Velkommen til chat * * * * *"
-        print "**************************************\n"
-        print "-----  Funksjoner  -----"
+        print "***********************************"
+        print "* * * * * Welcome to chat * * * * *"
+        print "***********************************\n"
+        print "-----  Functions  -----"
         print "<message>"
         print "/login <username>"
         print "/logout"
@@ -130,34 +112,26 @@ class Client:
             input = raw_input()
             if input.startswith("/login"):
                 self.login(input[6:].strip())
-                self.loggedIn = True
 
             elif input.startswith("/logout"):
                 self.logout()
-                self.disconnect()
+                #self.disconnect()
 
             elif input.startswith("/names"):
-                if self.loggedIn:
-                    self.retrieve_names()
-                else:
-                    print "Error: Du må være logget inn for å bruke denne funksjonen"
+                self.retrieve_names()
 
             elif input.startswith("/help"):
                 self.help()
 
             elif input.startswith("/disconnect"):
                 if self.loggedIn:
-                    print "Error: Du må logge ut før du kan avslutte programmet"
+                    print "Error: Yout must log out before exiting the program."
                 else:
                     self.disconnect()
                     break
 
             else:
-                if self.loggedIn:
-                    self.send_message(input)
-                else:
-                    print "Error: Du må være logget inn for å bruke denne funksjonen"
-
+                self.send_message(input)
 
 
 if __name__ == '__main__':
@@ -178,5 +152,4 @@ if __name__ == '__main__':
 # - handleHistory ()
 # - handleMessage ()
 
-le
 #Endring
