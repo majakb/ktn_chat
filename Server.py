@@ -37,11 +37,15 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 if self.loggedIn():
                     self.send_payload(["error", "Already logged in."])
                 else:
-                    ClientHandler.clients.append(self)
-                    self.username = content
-                    self.send_payload(["info", "You're now logged in. Welcome!"])
-                    self.send_payload(["history", self.messages])
-                    print "User logged in: " + self.username
+                    valid, msg = self.isValidUsername(content)
+                    if valid == "error":
+                        self.send_payload([valid, msg])
+                    else:
+                        ClientHandler.clients.append(self)
+                        self.username = content
+                        self.send_payload(["info", "You're now logged in. Welcome!"])
+                        self.send_payload(["history", self.messages])
+                        print "User logged in: " + self.username
 
             elif request == "logout":
                 if not self.loggedIn():
@@ -98,9 +102,25 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             if client != self:
                 client.connection.sendall(payload)
 
-
     def loggedIn(self):
         return self in self.clients
+
+    def isValidUsername(self, content):
+        if content=="" or content.isspace():
+            msg = "Cannot have emtpy username."
+            return "error", msg
+        elif ClientHandler.clients:
+            for client in ClientHandler.clients:
+                name = client.username
+                if name == content:
+                    msg = "Username \"" + content + "\" is already taken"
+                    return "error", msg
+
+        for c in content:
+            if not ("a" <= c <= "z") or ("A" <= c <= "Z") or ("0" <= c <= "9"):
+                return "error", "Letters in username must be a-z, A-Z or 0-9."
+
+        return "valid", "msg"
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
