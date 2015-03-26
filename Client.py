@@ -84,7 +84,7 @@ class Client:
         self.send_payload(data)
 
         #Close the MessageReceiver thread
-        self.messagereceiver.exit()
+        self.messagereceiver.join()
 
 
     def retrieve_names(self):
@@ -133,8 +133,8 @@ class Client:
                 self.help()
 
             elif input.startswith("/disconnect"):
-                if self.loggedIn():
-                    self.send_payload("error", "You must be logged out before you can disconnect!")
+                if self.loggedIn:
+                    self.send_payload(["error", "You must be logged out before you can disconnect!"])
                 else:
                     self.disconnect()
 

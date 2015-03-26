@@ -34,11 +34,14 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             content = data["content"]
 
             if request == "login":
-                ClientHandler.clients.append(self)
-                self.username = content
-                self.send_payload(["info", "Du er nå logget inn. Velkommen!"])
-                self.send_payload(["history", self.messages])
-                print "User logged in: " + self.username
+                if self.loggedIn():
+                    self.send_payload(["error", "Du er allerede logget inn."])
+                else:
+                    ClientHandler.clients.append(self)
+                    self.username = content
+                    self.send_payload(["info", "Du er nå logget inn. Velkommen!"])
+                    self.send_payload(["history", self.messages])
+                    print "User logged in: " + self.username
 
             elif request == "logout":
                 if not self.loggedIn():
