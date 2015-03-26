@@ -16,6 +16,7 @@ class Client:
 
         self.host = host
         self.server_port = server_port
+        self.loggedIn = False
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -85,6 +86,7 @@ class Client:
 
         #Close the MessageReceiver thread
         self.messagereceiver.join()
+        self.loggedIn = False
 
 
     def retrieve_names(self):
@@ -127,19 +129,25 @@ class Client:
                 self.disconnect()
 
             elif input.startswith("/names"):
-                self.retrieve_names()
+                if self.loggedIn:
+                    self.retrieve_names()
+                else:
+                    print "Error: Du må være logget inn for å bruke denne funksjonen"
 
             elif input.startswith("/help"):
                 self.help()
 
             elif input.startswith("/disconnect"):
                 if self.loggedIn:
-                    self.send_payload(["error", "You must be logged out before you can disconnect!"])
+                    print "Error: Du må logge ut før du kan avslutte programmet"
                 else:
                     self.disconnect()
 
             else:
-                self.send_message(input)
+                if self.loggedIn:
+                    self.send_message(input)
+                else:
+                    print "Error: Du må være logget inn for å bruke denne funksjonen"
 
 
 
