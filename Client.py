@@ -85,7 +85,7 @@ class Client:
         self.send_payload(data)
 
         #Close the MessageReceiver thread
-        self.messagereceiver.exit()
+        self.messagereceiver.join()
         self.loggedIn = False
 
 
