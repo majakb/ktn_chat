@@ -28,7 +28,7 @@ class Client:
 
 
     def disconnect(self):
-        self.conncetion.close()
+        self.connection.close()
 
     def receive_message(self, message):
         timestamp = datetime.datetime.fromtimestamp(int(message["timestamp"])).strftime('%Y-%m-%d %H:%M:%S')
@@ -43,17 +43,20 @@ class Client:
 
         elif response == "info":
             print "@ Info fra server ("+timestamp+"):"
-            print ">> " + content
+            print content
 
         elif response == "history":
-            print "-------------- HISTORY -----------------"
-            for msg in content:
-                self.receive_message(msg)
-            print "----------------------------------------"
+            print "\n-------------- HISTORIE -----------------"
+            if not content:
+                print "Ingen historie å vise."
+            else:
+                for msg in content:
+                    self.receive_message(msg)
+            print "----------------------------------------\n"
 
         elif response == "error":
             print "@ Error ("+timestamp+"):"
-            print ">> " + content
+            print content
 
         else:
             print "@ Udefinert response fra " + sender + " ("+timestamp+"):"
