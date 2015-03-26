@@ -127,13 +127,16 @@ class Client:
                 self.disconnect()
 
             elif input.startswith("/names"):
-                self.retreive_names()
+                self.retrieve_names()
 
             elif input.startswith("/help"):
                 self.help()
 
             elif input.startswith("/disconnect"):
-                self.disconnect()
+                if self.loggedIn():
+                    self.send_payload("error", "You must be logged out before you can disconnect!")
+                else:
+                    self.disconnect()
 
             else:
                 self.send_message(input)

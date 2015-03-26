@@ -41,29 +41,37 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
             elif request == "logout":
                 if not self.loggedIn():
-                    self.send_payload("Error", "Du er ikke logget inn enda.")
+                    self.send_payload("error", "Du er ikke logget inn enda.")
                 else:
                     ClientHandler.clients.remove(self)
                     self.send_payload(["info", "Du er nå logget av. Velkommen tilbake!"])
 
             elif request == "names":
-                c = []
-                for client in ClientHandler.clients:
-                    c.append(client.username)
-                self.send_payload(["info", c])
+                if not self.loggedIn():
+                    self.send_payload("error", "Du er ikke logget inn enda.")
+                else:
+                    c = []
+                    for client in ClientHandler.clients:
+                        c.append(client.username)
+                    self.send_payload(["info", c])
 
             elif request == "help":
                 string = "**********************************\n" \
                          "-----  Supported requests  -----\n" \
-                         "login <username>\n" \
-                         "msg <message>\n" \
-                         "names\n" \
-                         "help\n" \
+                         "/login <username>\n" \
+                         "<message>\n" \
+                         "/names\n" \
+                         "/help\n" \
+                         "/logout\n" \
+                         "/disconnect\n" \
                          "**********************************\n"
                 self.send_payload(["info", string])
 
             elif request == "msg":
-                self.broadcast(["message", content])
+                if not self.loggedIn():
+                    self.send_payload("error", "Du er ikke logget inn enda.")
+                else:
+                    self.broadcast(["message", content])
 
             else:
                 self.send_payload(["error", "Request not supported by server."])
