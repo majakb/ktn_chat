@@ -37,11 +37,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 self.username = content
                 self.send_payload(["info", "Du er nå logget inn. Velkommen!"])
                 self.send_payload(["history", self.messages])
+                print "User logged in: " + self.username
 
             elif request == "logout":
-                #DEBUG
-                print ""
-                #END
                 if not self.loggedIn():
                     self.send_payload("Error", "Du er ikke logget inn enda.")
                 else:
@@ -74,9 +72,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def send_payload(self, data):
         payload = json.dumps({"timestamp": time.time(), "sender": self.username, "response": data[0], "content": data[1]})
-        #DEBUG
-        print "payload: " + payload
-        #DEBUG
         self.connection.sendall(payload)
 
     def broadcast(self, data):
