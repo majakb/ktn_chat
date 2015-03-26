@@ -98,15 +98,16 @@ class Client:
             data = ["help", None]
             self.send_payload(data)
         else:
-            print "**********************************"
-            print "-----  Supported requests  -----"
-            print "/login <username>"
-            print "<message>"
-            print "/names"
-            print "/help"
-            print "/logout"
-            print "/disconnect"
-            print "**********************************\n"
+            pass
+            #print "**********************************"
+            #print "-----  Supported requests  -----"
+            #print "/login <username>"
+            #print "<message>"
+            #print "/names"
+            #print "/help"
+            #print "/logout"
+            #print "/disconnect"
+            #print "**********************************\n"
 
     def send_message(self, message):
         data = ["msg", message]
@@ -166,7 +167,7 @@ if __name__ == '__main__':
 
     No alterations is necessary
     """
-    client = Client("localhost", 9998)           #78.91.72.240
+    client = Client("localhost", 9998)           #78.91.72.240          78.91.67.206
     client.main()
 
 
@@ -177,5 +178,5 @@ if __name__ == '__main__':
 # - handleHistory ()
 # - handleMessage ()
 
-
+le
 #Endring
